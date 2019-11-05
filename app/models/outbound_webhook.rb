@@ -5,15 +5,11 @@ require 'faraday'
 class OutboundWebhook < ActiveRecord::Base
   has_soft_deletion default_scope: true
   include SoftDeleteWithDestroy
+  self.ignored_columns = ["stage_id", "project_id"]
 
-  belongs_to :project, inverse_of: :outbound_webhooks
-  belongs_to :stage, inverse_of: :outbound_webhooks
+  has_many :outbound_webhook_stages
+  has_many :stages, through: :outbound_webhook_stages
 
-  validates :url, uniqueness: {
-    scope: :stage_id,
-    conditions: -> { where("deleted_at IS NULL") },
-    message: "one webhook per (stage, url) combination."
-  }
   validate :url_is_not_relative
   validates :username, presence: {if: proc { |outbound_webhook| outbound_webhook.password.present? }}
   validates :password, presence: {if: proc { |outbound_webhook| outbound_webhook.username.present? }}

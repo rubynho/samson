@@ -16,7 +16,7 @@ class Stage < ActiveRecord::Base
 
   has_many :deploys, dependent: :destroy
   has_many :webhooks, dependent: :destroy
-  has_many :outbound_webhooks, dependent: :destroy
+  has_many :outbound_webhook_stages, dependent: :destroy
 
   belongs_to :template_stage, class_name: "Stage", optional: true, inverse_of: :clones
   has_many :clones, class_name: "Stage", foreign_key: "template_stage_id", dependent: nil, inverse_of: :template_stage
